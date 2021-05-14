@@ -5,15 +5,10 @@ import bladder.api.crafting.FluidIngredient;
 import bladder.api.item.CeramicBucketItems;
 import bladder.compat.ModCompat;
 import bladder.item.AbstractCeramicBucketItem;
-import bladder.item.CeramicEntityBucketItem;
 import bladder.item.CeramicMilkBucketItem;
 import bladder.item.crafting.CeramicBucketDyeRecipe;
-import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.util.ActionResultType;
@@ -26,8 +21,6 @@ import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.common.Mod;
 
 import static bladder.Bladder.MOD_ID;
@@ -52,8 +45,7 @@ public class Bladder
                 (stack, color) -> (color > 0) ? -1 : ((AbstractCeramicBucketItem) stack.getItem()).getColor(stack),
                 CeramicBucketItems.CERAMIC_BUCKET,
                 CeramicBucketItems.FILLED_CERAMIC_BUCKET,
-                CeramicBucketItems.CERAMIC_MILK_BUCKET,
-                CeramicBucketItems.CERAMIC_ENTITY_BUCKET);
+                CeramicBucketItems.CERAMIC_MILK_BUCKET);
     }
 
     @SubscribeEvent
@@ -93,41 +85,6 @@ public class Bladder
                     else if (!player.inventory.addItemStackToInventory(milkBucket))
                     {
                         player.dropItem(milkBucket, false);
-                    }
-                }
-                event.setCanceled(true);
-                event.setCancellationResult(ActionResultType.SUCCESS);
-            }
-        }
-        else
-        {
-            //check if filled ceramic bucket is there and contains a fluid
-            //or ceramic bucket is there
-            Fluid fluid = FluidUtil.getFluidContained(itemstack).orElse(FluidStack.EMPTY).getFluid();
-            if ((fluid != Fluids.EMPTY && itemstack.getItem() != CeramicBucketItems.FILLED_CERAMIC_BUCKET)
-                || (fluid == Fluids.EMPTY && itemstack.getItem() != CeramicBucketItems.CERAMIC_BUCKET))
-            {
-                return;
-            }
-            //check if the entity can be inside of a ceramic entity bucket
-            if (ModCompat.canEntityBeObtained(fluid, entity))
-            {
-                ItemStack filledBucket = ((CeramicEntityBucketItem) CeramicBucketItems.CERAMIC_ENTITY_BUCKET).getFilledInstance(fluid, entity, itemstack);
-                ((CeramicEntityBucketItem) CeramicBucketItems.CERAMIC_ENTITY_BUCKET).playFillSound(player, filledBucket);
-                if (!event.getWorld().isRemote())
-                {
-                    itemstack.shrink(1);
-                    if (player instanceof ServerPlayerEntity)
-                    {
-                        CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayerEntity) player, filledBucket);
-                    }
-                    if (itemstack.isEmpty())
-                    {
-                        player.setHeldItem(event.getHand(), filledBucket);
-                    }
-                    else if (!player.inventory.addItemStackToInventory(filledBucket))
-                    {
-                        player.dropItem(filledBucket, false);
                     }
                 }
                 event.setCanceled(true);

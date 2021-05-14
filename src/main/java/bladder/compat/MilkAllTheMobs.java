@@ -16,11 +16,6 @@ public class MilkAllTheMobs extends ModCompat.Mod implements ModCompat.MobMilkin
     @Override
     public boolean canEntityBeMilked(Entity entity)
     {
-        return entity instanceof SheepEntity
-               || entity instanceof LlamaEntity
-               || entity instanceof PigEntity
-               || entity instanceof DonkeyEntity
-               || entity instanceof HorseEntity
-               || entity instanceof MuleEntity;
+        return entity instanceof SheepEntity || entity instanceof LlamaEntity || entity instanceof PigEntity || entity instanceof DonkeyEntity || entity instanceof HorseEntity || entity instanceof MuleEntity;
     }
 }

@@ -1,13 +1,14 @@
 package bladder.init;
 
 import bladder.api.item.CeramicBucketItems;
-import bladder.item.*;
+import bladder.item.CeramicBucketItem;
+import bladder.item.CeramicMilkBucketItem;
+import bladder.item.FilledCeramicBucketItem;
 import bladder.util.CeramicBucketUtils;
 import net.minecraft.block.*;
 import net.minecraft.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.dispenser.IBlockSource;
 import net.minecraft.dispenser.IDispenseItemBehavior;
-import net.minecraft.entity.EntityType;
 import net.minecraft.fluid.FlowingFluid;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
@@ -36,14 +37,6 @@ public class ModItems
         CeramicBucketItems.CERAMIC_BUCKET = registerItem("ceramic_bucket", new CeramicBucketItem((new Item.Properties()).maxStackSize(16).group(ItemGroup.MISC)));
         CeramicBucketItems.FILLED_CERAMIC_BUCKET = registerItem("filled_ceramic_bucket", new FilledCeramicBucketItem((new Item.Properties()).maxStackSize(1).group(ItemGroup.MISC)));
         CeramicBucketItems.CERAMIC_MILK_BUCKET = registerItem("ceramic_milk_bucket", new CeramicMilkBucketItem((new Item.Properties()).maxStackSize(1).group(ItemGroup.MISC)));
-
-        CeramicBucketItems.CERAMIC_ENTITY_BUCKET = registerItem("ceramic_entity_bucket", new CeramicEntityBucketItem((new Item.Properties()).maxStackSize(1).group(ItemGroup.MISC)));
-
-        //TODO fish buckets can be removed on 1.17 update
-        CeramicBucketItems.PUFFERFISH_CERAMIC_BUCKET = registerItem("pufferfish_ceramic_bucket", new CeramicFishBucketItem(EntityType.PUFFERFISH, (new Item.Properties()).maxStackSize(1)));
-        CeramicBucketItems.SALMON_CERAMIC_BUCKET = registerItem("salmon_ceramic_bucket", new CeramicFishBucketItem(EntityType.SALMON, (new Item.Properties()).maxStackSize(1)));
-        CeramicBucketItems.COD_CERAMIC_BUCKET = registerItem("cod_ceramic_bucket", new CeramicFishBucketItem(EntityType.COD, (new Item.Properties()).maxStackSize(1)));
-        CeramicBucketItems.TROPICAL_FISH_CERAMIC_BUCKET = registerItem("tropical_fish_ceramic_bucket", new CeramicFishBucketItem(EntityType.TROPICAL_FISH, (new Item.Properties()).maxStackSize(1)));
 
         //dispense behaviour empty bucket
         DispenserBlock.registerDispenseBehavior(CeramicBucketItems.CERAMIC_BUCKET, new DefaultDispenseItemBehavior()
@@ -120,12 +113,6 @@ public class ModItems
         };
         DispenserBlock.registerDispenseBehavior(CeramicBucketItems.FILLED_CERAMIC_BUCKET, idispenseitembehavior);
         DispenserBlock.registerDispenseBehavior(CeramicBucketItems.CERAMIC_MILK_BUCKET, idispenseitembehavior);
-        DispenserBlock.registerDispenseBehavior(CeramicBucketItems.CERAMIC_ENTITY_BUCKET, idispenseitembehavior);
-        //TODO fish buckets can be removed on 1.17 update
-        DispenserBlock.registerDispenseBehavior(CeramicBucketItems.PUFFERFISH_CERAMIC_BUCKET, idispenseitembehavior);
-        DispenserBlock.registerDispenseBehavior(CeramicBucketItems.SALMON_CERAMIC_BUCKET, idispenseitembehavior);
-        DispenserBlock.registerDispenseBehavior(CeramicBucketItems.COD_CERAMIC_BUCKET, idispenseitembehavior);
-        DispenserBlock.registerDispenseBehavior(CeramicBucketItems.TROPICAL_FISH_CERAMIC_BUCKET, idispenseitembehavior);
     }
 
     private static Item registerItem(String name, Item item)
