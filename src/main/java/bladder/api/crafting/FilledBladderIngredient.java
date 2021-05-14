@@ -14,17 +14,15 @@ import net.minecraft.tags.ITag;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.IIngredientSerializer;
-import net.minecraftforge.fluids.FluidUtil;
 
 import javax.annotation.Nonnull;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 /**
- * A Ceramic Bucket filled with a fluid can be used in recipes with this ingredient class.
+ * A Bladder filled with a fluid can be used in recipes with this ingredient class.
  * Usage is the same as for a vanilla ingredient.
  * Example JSON object: { "type": "bladder:full_bladder", "tag": "minecraft:lava" }
- * The tag is a fluid tag of the fluid that the Ceramic Bucket should contain.
+ * The tag is a fluid tag of the fluid that the Bladder should contain.
  */
 public class FilledBladderIngredient extends Ingredient
 {
@@ -41,17 +39,6 @@ public class FilledBladderIngredient extends Ingredient
     public FilledBladderIngredient(ResourceLocation resourceLocation)
     {
         this(FluidTags.makeWrapperTag(resourceLocation.toString()));
-    }
-
-    @Override
-    public boolean test(ItemStack itemStack)
-    {
-        AtomicBoolean result = new AtomicBoolean(false);
-        if (itemStack != null && itemStack.getItem() == BladderItems.FULL_BLADDER)
-        {
-            FluidUtil.getFluidContained(itemStack).ifPresent(fluidStack -> result.set(fluidStack.getFluid().isIn(fluidTag)));
-        }
-        return result.get();
     }
 
     @Override

@@ -9,7 +9,8 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.fluid.FlowingFluid;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.item.*;
+import net.minecraft.item.BucketItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.FluidTags;
@@ -30,7 +31,6 @@ import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.function.Supplier;
 
 public abstract class AbstractBladderItem extends BucketItem

@@ -54,19 +54,6 @@ public class FluidIngredient extends Ingredient
     }
 
     @Override
-    public boolean test(ItemStack itemStack)
-    {
-        AtomicBoolean result = new AtomicBoolean(false);
-        if (itemStack != null)
-        {
-            FluidUtil.getFluidContained(itemStack).ifPresent(fluidStack ->
-                    result.set(fluidStack.getFluid().isIn(fluidTag) && ((this.exact) ? fluidStack.getAmount() == this.amount : fluidStack.getAmount() >= this.amount))
-            );
-        }
-        return result.get();
-    }
-
-    @Override
     @Nonnull
     public ItemStack[] getMatchingStacks()
     {
