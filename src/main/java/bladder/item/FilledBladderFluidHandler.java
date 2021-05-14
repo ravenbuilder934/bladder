@@ -7,10 +7,10 @@ import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 
 import javax.annotation.Nonnull;
 
-public class FilledCeramicBucketFluidHandler extends FluidHandlerItemStack
+public class FilledBladderFluidHandler extends FluidHandlerItemStack
 {
 
-    public FilledCeramicBucketFluidHandler(@Nonnull ItemStack container)
+    public FilledBladderFluidHandler(@Nonnull ItemStack container)
     {
         super(container, FluidAttributes.BUCKET_VOLUME);
     }

@@ -1,6 +1,6 @@
 package bladder.item;
 
-import bladder.util.CeramicBucketUtils;
+import bladder.util.BladderUtils;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
@@ -33,10 +33,10 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Supplier;
 
-public abstract class AbstractCeramicBucketItem extends BucketItem
+public abstract class AbstractBladderItem extends BucketItem
 {
 
-    public AbstractCeramicBucketItem(Supplier<? extends Fluid> supplier, Properties builder)
+    public AbstractBladderItem(Supplier<? extends Fluid> supplier, Properties builder)
     {
         super(supplier, builder);
     }
@@ -111,11 +111,11 @@ public abstract class AbstractCeramicBucketItem extends BucketItem
         int[] color = new int[3];
         int i = 0;
         int j = 0;
-        AbstractCeramicBucketItem bucketItem = null;
+        AbstractBladderItem bucketItem = null;
         Item item = stack.getItem();
-        if (item instanceof AbstractCeramicBucketItem)
+        if (item instanceof AbstractBladderItem)
         {
-            bucketItem = (AbstractCeramicBucketItem) item;
+            bucketItem = (AbstractBladderItem) item;
             resultStack = stack.copy();
             resultStack.setCount(1);
             if (hasColor(stack))
@@ -317,7 +317,7 @@ public abstract class AbstractCeramicBucketItem extends BucketItem
         {
             if (stack.getCount() > 1)
             {
-                ItemStack newStack = CeramicBucketUtils.getFilledCeramicBucket(fluid, stack);
+                ItemStack newStack = BladderUtils.getFilledBladder(fluid, stack);
                 stack.shrink(1);
                 if (player != null && !player.inventory.addItemStackToInventory(newStack))
                 {

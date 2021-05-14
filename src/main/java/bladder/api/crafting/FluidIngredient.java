@@ -1,7 +1,7 @@
 package bladder.api.crafting;
 
 import bladder.Bladder;
-import bladder.util.CeramicBucketUtils;
+import bladder.util.BladderUtils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.fluid.Fluid;
@@ -82,7 +82,7 @@ public class FluidIngredient extends Ingredient
                 if (bucketFluid != Fluids.EMPTY && !addedFluids.contains(bucketFluid))
                 {
                     stacks.add(bucket);
-                    stacks.add(CeramicBucketUtils.getFilledCeramicBucket(bucketFluid, null));
+                    stacks.add(BladderUtils.getFilledBladder(bucketFluid, null));
                     addedFluids.add(bucketFluid);
                 }
             });

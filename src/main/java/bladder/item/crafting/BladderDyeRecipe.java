@@ -1,7 +1,7 @@
 package bladder.item.crafting;
 
 import bladder.Bladder;
-import bladder.item.AbstractCeramicBucketItem;
+import bladder.item.AbstractBladderItem;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.inventory.CraftingInventory;
@@ -19,12 +19,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class CeramicBucketDyeRecipe extends SpecialRecipe
+public class BladderDyeRecipe extends SpecialRecipe
 {
 
-    public static final SpecialRecipeSerializer<CeramicBucketDyeRecipe> SERIALIZER = new Serializer();
+    public static final SpecialRecipeSerializer<BladderDyeRecipe> SERIALIZER = new Serializer();
 
-    public CeramicBucketDyeRecipe(ResourceLocation id)
+    public BladderDyeRecipe(ResourceLocation id)
     {
         super(id);
     }
@@ -40,7 +40,7 @@ public class CeramicBucketDyeRecipe extends SpecialRecipe
             if (!stack.isEmpty())
             {
                 Item item = stack.getItem();
-                if (item instanceof AbstractCeramicBucketItem)
+                if (item instanceof AbstractBladderItem)
                 {
                     if (!bucket.isEmpty())
                     {
@@ -83,7 +83,7 @@ public class CeramicBucketDyeRecipe extends SpecialRecipe
         Pair<ItemStack, List<DyeItem>> bucketAndDyes = getBucketAndDyes(inv);
         if (bucketAndDyes != null)
         {
-            return AbstractCeramicBucketItem.dyeItem(bucketAndDyes.getFirst(), bucketAndDyes.getSecond());
+            return AbstractBladderItem.dyeItem(bucketAndDyes.getFirst(), bucketAndDyes.getSecond());
         }
         return ItemStack.EMPTY;
     }
@@ -110,12 +110,12 @@ public class CeramicBucketDyeRecipe extends SpecialRecipe
         return SERIALIZER;
     }
 
-    private static class Serializer extends SpecialRecipeSerializer<CeramicBucketDyeRecipe>
+    private static class Serializer extends SpecialRecipeSerializer<BladderDyeRecipe>
     {
         public Serializer()
         {
-            super(CeramicBucketDyeRecipe::new);
-            this.setRegistryName(Bladder.MOD_ID, "ceramic_bucket_dye_recipe");
+            super(BladderDyeRecipe::new);
+            this.setRegistryName(Bladder.MOD_ID, "empty_bladder_dye_recipe");
         }
     }
 

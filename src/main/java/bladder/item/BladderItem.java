@@ -7,10 +7,10 @@ import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 
 import javax.annotation.Nonnull;
 
-public class CeramicBucketItem extends AbstractCeramicBucketItem
+public class BladderItem extends AbstractBladderItem
 {
 
-    public CeramicBucketItem(Item.Properties builder)
+    public BladderItem(Item.Properties builder)
     {
         super(Fluids.EMPTY.delegate, builder);
     }
@@ -19,7 +19,7 @@ public class CeramicBucketItem extends AbstractCeramicBucketItem
     @Override
     FluidHandlerItemStack getNewFluidHandlerInstance(@Nonnull ItemStack stack)
     {
-        return new CeramicBucketFluidHandler(stack);
+        return new BladderFluidHandler(stack);
     }
 
 }

@@ -1,8 +1,8 @@
 package bladder.api.crafting;
 
 import bladder.Bladder;
-import bladder.api.item.CeramicBucketItems;
-import bladder.item.FilledCeramicBucketItem;
+import bladder.api.item.BladderItems;
+import bladder.item.FilledBladderItem;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.fluid.Fluid;
@@ -23,22 +23,22 @@ import java.util.stream.Stream;
 /**
  * A Ceramic Bucket filled with a fluid can be used in recipes with this ingredient class.
  * Usage is the same as for a vanilla ingredient.
- * Example JSON object: { "type": "bladder:filled_ceramic_bucket", "tag": "minecraft:lava" }
+ * Example JSON object: { "type": "bladder:full_bladder", "tag": "minecraft:lava" }
  * The tag is a fluid tag of the fluid that the Ceramic Bucket should contain.
  */
-public class FilledCeramicBucketIngredient extends Ingredient
+public class FilledBladderIngredient extends Ingredient
 {
 
     protected final ITag.INamedTag<Fluid> fluidTag;
     private ItemStack[] matchingStacks;
 
-    public FilledCeramicBucketIngredient(ITag.INamedTag<Fluid> fluidTag)
+    public FilledBladderIngredient(ITag.INamedTag<Fluid> fluidTag)
     {
         super(Stream.of());
         this.fluidTag = fluidTag;
     }
 
-    public FilledCeramicBucketIngredient(ResourceLocation resourceLocation)
+    public FilledBladderIngredient(ResourceLocation resourceLocation)
     {
         this(FluidTags.makeWrapperTag(resourceLocation.toString()));
     }
@@ -47,7 +47,7 @@ public class FilledCeramicBucketIngredient extends Ingredient
     public boolean test(ItemStack itemStack)
     {
         AtomicBoolean result = new AtomicBoolean(false);
-        if (itemStack != null && itemStack.getItem() == CeramicBucketItems.FILLED_CERAMIC_BUCKET)
+        if (itemStack != null && itemStack.getItem() == BladderItems.FULL_BLADDER)
         {
             FluidUtil.getFluidContained(itemStack).ifPresent(fluidStack -> result.set(fluidStack.getFluid().isIn(fluidTag)));
         }
@@ -60,7 +60,7 @@ public class FilledCeramicBucketIngredient extends Ingredient
     {
         if (this.matchingStacks == null)
         {
-            FilledCeramicBucketItem bucketItem = (FilledCeramicBucketItem) CeramicBucketItems.FILLED_CERAMIC_BUCKET;
+            FilledBladderItem bucketItem = (FilledBladderItem) BladderItems.FULL_BLADDER;
             this.matchingStacks = this.fluidTag.getAllElements().stream()
                     .map(fluid -> bucketItem.getFilledInstance(fluid, null))
                     .filter(this)
@@ -103,31 +103,31 @@ public class FilledCeramicBucketIngredient extends Ingredient
         return jsonObject;
     }
 
-    public static final class Serializer implements IIngredientSerializer<FilledCeramicBucketIngredient>
+    public static final class Serializer implements IIngredientSerializer<FilledBladderIngredient>
     {
         public static final Serializer INSTANCE = new Serializer();
-        public static final ResourceLocation NAME = new ResourceLocation(Bladder.MOD_ID, "filled_ceramic_bucket");
+        public static final ResourceLocation NAME = new ResourceLocation(Bladder.MOD_ID, "full_bladder");
 
         private Serializer()
         {
         }
 
         @Override
-        public FilledCeramicBucketIngredient parse(PacketBuffer buffer)
+        public FilledBladderIngredient parse(PacketBuffer buffer)
         {
             ResourceLocation tag = buffer.readResourceLocation();
-            return new FilledCeramicBucketIngredient(tag);
+            return new FilledBladderIngredient(tag);
         }
 
         @Override
-        public FilledCeramicBucketIngredient parse(@Nonnull JsonObject json)
+        public FilledBladderIngredient parse(@Nonnull JsonObject json)
         {
             String tag = JSONUtils.getString(json, "tag");
-            return new FilledCeramicBucketIngredient(FluidTags.makeWrapperTag(tag));
+            return new FilledBladderIngredient(FluidTags.makeWrapperTag(tag));
         }
 
         @Override
-        public void write(PacketBuffer buffer, FilledCeramicBucketIngredient ingredient)
+        public void write(PacketBuffer buffer, FilledBladderIngredient ingredient)
         {
             buffer.writeString(ingredient.fluidTag.getName().toString());
         }

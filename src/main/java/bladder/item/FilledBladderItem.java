@@ -1,7 +1,7 @@
 package bladder.item;
 
-import bladder.api.item.CeramicBucketItems;
-import bladder.util.CeramicBucketUtils;
+import bladder.api.item.BladderItems;
+import bladder.util.BladderUtils;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.*;
@@ -20,10 +20,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 
-public class FilledCeramicBucketItem extends AbstractCeramicBucketItem
+public class FilledBladderItem extends AbstractBladderItem
 {
 
-    public FilledCeramicBucketItem(Properties builder)
+    public FilledBladderItem(Properties builder)
     {
         super(Fluids.EMPTY.delegate, builder);
     }
@@ -32,7 +32,7 @@ public class FilledCeramicBucketItem extends AbstractCeramicBucketItem
     @Override
     FluidHandlerItemStack getNewFluidHandlerInstance(@Nonnull ItemStack stack)
     {
-        return new FilledCeramicBucketFluidHandler(stack);
+        return new FilledBladderFluidHandler(stack);
     }
 
     public ItemStack getFilledInstance(@Nonnull Fluid fluid, @Nullable ItemStack oldStack)
@@ -82,7 +82,7 @@ public class FilledCeramicBucketItem extends AbstractCeramicBucketItem
     @Nonnull
     public String getTranslationKey()
     {
-        return Util.makeTranslationKey("item", CeramicBucketItems.CERAMIC_BUCKET.getRegistryName());
+        return Util.makeTranslationKey("item", BladderItems.EMPTY_BLADDER.getRegistryName());
     }
 
     @Override
@@ -91,7 +91,7 @@ public class FilledCeramicBucketItem extends AbstractCeramicBucketItem
     {
         if (getFluid(stack) == Fluids.EMPTY)
         {
-            return new TranslationTextComponent("item.bladder.ceramic_bucket");
+            return new TranslationTextComponent("item.bladder.empty_bladder");
         }
         else
         {
@@ -106,7 +106,7 @@ public class FilledCeramicBucketItem extends AbstractCeramicBucketItem
                 //fluids registered by mods
                 fluidText = new TranslationTextComponent(Util.makeTranslationKey("fluid", ForgeRegistries.FLUIDS.getKey(getFluid(stack))));
             }
-            return new TranslationTextComponent("item.bladder.filled_ceramic_bucket", fluidText);
+            return new TranslationTextComponent("item.bladder.full_bladder", fluidText);
         }
     }
 
@@ -114,7 +114,7 @@ public class FilledCeramicBucketItem extends AbstractCeramicBucketItem
     public int getBurnTime(ItemStack itemStack)
     {
         //get burn time of normal bucket
-        int burnTime = CeramicBucketUtils.getBurnTimeOfFluid(this.getFluid(itemStack));
+        int burnTime = BladderUtils.getBurnTimeOfFluid(this.getFluid(itemStack));
         if (burnTime >= 0)
         {
             return burnTime;
@@ -135,7 +135,7 @@ public class FilledCeramicBucketItem extends AbstractCeramicBucketItem
         //for using a filled bucket as fuel or in crafting recipes, an empty bucket should remain
         if (this.hasContainerItem(itemStack))
         {
-            return copyNBTWithoutBucketContent(itemStack, new ItemStack(CeramicBucketItems.CERAMIC_BUCKET));
+            return copyNBTWithoutBucketContent(itemStack, new ItemStack(BladderItems.EMPTY_BLADDER));
         }
         return ItemStack.EMPTY;
     }

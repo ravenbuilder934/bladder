@@ -1,9 +1,9 @@
 package bladder.init;
 
-import bladder.api.item.CeramicBucketItems;
-import bladder.item.CeramicBucketItem;
-import bladder.item.FilledCeramicBucketItem;
-import bladder.util.CeramicBucketUtils;
+import bladder.api.item.BladderItems;
+import bladder.item.BladderItem;
+import bladder.item.FilledBladderItem;
+import bladder.util.BladderUtils;
 import net.minecraft.block.*;
 import net.minecraft.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.dispenser.IBlockSource;
@@ -33,11 +33,11 @@ public class ModItems
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event)
     {
-        CeramicBucketItems.CERAMIC_BUCKET = registerItem("ceramic_bucket", new CeramicBucketItem((new Item.Properties()).maxStackSize(16).group(ItemGroup.MISC)));
-        CeramicBucketItems.FILLED_CERAMIC_BUCKET = registerItem("filled_ceramic_bucket", new FilledCeramicBucketItem((new Item.Properties()).maxStackSize(1).group(ItemGroup.MISC)));
+        BladderItems.EMPTY_BLADDER = registerItem("empty_bladder", new BladderItem((new Item.Properties()).maxStackSize(16).group(ItemGroup.MISC)));
+        BladderItems.FULL_BLADDER = registerItem("full_bladder", new FilledBladderItem((new Item.Properties()).maxStackSize(1).group(ItemGroup.MISC)));
 
         //dispense behaviour empty bucket
-        DispenserBlock.registerDispenseBehavior(CeramicBucketItems.CERAMIC_BUCKET, new DefaultDispenseItemBehavior()
+        DispenserBlock.registerDispenseBehavior(BladderItems.EMPTY_BLADDER, new DefaultDispenseItemBehavior()
         {
             private final DefaultDispenseItemBehavior dispenseBehavior = new DefaultDispenseItemBehavior();
 
@@ -60,7 +60,7 @@ public class ModItems
                     }
                     else
                     {
-                        ItemStack bucket = CeramicBucketUtils.getFilledCeramicBucket(fluid, stack);
+                        ItemStack bucket = BladderUtils.getFilledBladder(fluid, stack);
                         stack.shrink(1);
                         if (stack.isEmpty())
                         {
@@ -95,7 +95,7 @@ public class ModItems
             @Nonnull
             public ItemStack dispenseStack(IBlockSource source, ItemStack stack)
             {
-                FilledCeramicBucketItem bucketItem = (FilledCeramicBucketItem) stack.getItem();
+                FilledBladderItem bucketItem = (FilledBladderItem) stack.getItem();
                 BlockPos blockpos = source.getBlockPos().offset(source.getBlockState().get(DispenserBlock.FACING));
                 World world = source.getWorld();
                 if (bucketItem.tryPlaceContainedLiquid(null, world, blockpos, null, stack))
@@ -109,7 +109,7 @@ public class ModItems
                 }
             }
         };
-        DispenserBlock.registerDispenseBehavior(CeramicBucketItems.FILLED_CERAMIC_BUCKET, idispenseitembehavior);
+        DispenserBlock.registerDispenseBehavior(BladderItems.FULL_BLADDER, idispenseitembehavior);
     }
 
     private static Item registerItem(String name, Item item)

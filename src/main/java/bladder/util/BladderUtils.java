@@ -1,7 +1,7 @@
 package bladder.util;
 
-import bladder.api.item.CeramicBucketItems;
-import bladder.item.FilledCeramicBucketItem;
+import bladder.api.item.BladderItems;
+import bladder.item.FilledBladderItem;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
@@ -9,12 +9,12 @@ import net.minecraftforge.common.ForgeHooks;
 
 import javax.annotation.Nonnull;
 
-public class CeramicBucketUtils
+public class BladderUtils
 {
 
-    public static ItemStack getFilledCeramicBucket(Fluid fluid, ItemStack emptyBucket)
+    public static ItemStack getFilledBladder(Fluid fluid, ItemStack emptyBucket)
     {
-        return ((FilledCeramicBucketItem) CeramicBucketItems.FILLED_CERAMIC_BUCKET).getFilledInstance(fluid, emptyBucket);
+        return ((FilledBladderItem) BladderItems.FULL_BLADDER).getFilledInstance(fluid, emptyBucket);
     }
 
     /**

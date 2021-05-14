@@ -1,6 +1,6 @@
 package bladder.item;
 
-import bladder.util.CeramicBucketUtils;
+import bladder.util.BladderUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
@@ -8,10 +8,10 @@ import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 
 import javax.annotation.Nonnull;
 
-public class CeramicBucketFluidHandler extends FluidHandlerItemStack
+public class BladderFluidHandler extends FluidHandlerItemStack
 {
 
-    public CeramicBucketFluidHandler(@Nonnull ItemStack container)
+    public BladderFluidHandler(@Nonnull ItemStack container)
     {
         super(container, FluidAttributes.BUCKET_VOLUME);
     }
@@ -19,7 +19,7 @@ public class CeramicBucketFluidHandler extends FluidHandlerItemStack
     @Override
     protected void setFluid(FluidStack fluid)
     {
-        this.container = CeramicBucketUtils.getFilledCeramicBucket(fluid.getFluid(), this.container);
+        this.container = BladderUtils.getFilledBladder(fluid.getFluid(), this.container);
     }
 
     @Override
