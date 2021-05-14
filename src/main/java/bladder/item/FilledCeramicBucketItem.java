@@ -64,9 +64,8 @@ public class FilledCeramicBucketItem extends AbstractCeramicBucketItem
             ArrayList<Fluid> addedFluids = new ArrayList<>();
             for (Fluid fluid : ForgeRegistries.FLUIDS)
             {
-                //only add non milk source fluids with a bucket item
                 Item bucket = fluid.getFilledBucket();
-                if (bucket instanceof BucketItem && !CeramicBucketUtils.isMilkFluid(fluid, false))
+                if (bucket instanceof BucketItem)
                 {
                     Fluid bucketFluid = ((BucketItem) bucket).getFluid();
                     if (!addedFluids.contains(bucketFluid))

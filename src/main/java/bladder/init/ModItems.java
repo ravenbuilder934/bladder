@@ -2,7 +2,6 @@ package bladder.init;
 
 import bladder.api.item.CeramicBucketItems;
 import bladder.item.CeramicBucketItem;
-import bladder.item.CeramicMilkBucketItem;
 import bladder.item.FilledCeramicBucketItem;
 import bladder.util.CeramicBucketUtils;
 import net.minecraft.block.*;
@@ -36,7 +35,6 @@ public class ModItems
     {
         CeramicBucketItems.CERAMIC_BUCKET = registerItem("ceramic_bucket", new CeramicBucketItem((new Item.Properties()).maxStackSize(16).group(ItemGroup.MISC)));
         CeramicBucketItems.FILLED_CERAMIC_BUCKET = registerItem("filled_ceramic_bucket", new FilledCeramicBucketItem((new Item.Properties()).maxStackSize(1).group(ItemGroup.MISC)));
-        CeramicBucketItems.CERAMIC_MILK_BUCKET = registerItem("ceramic_milk_bucket", new CeramicMilkBucketItem((new Item.Properties()).maxStackSize(1).group(ItemGroup.MISC)));
 
         //dispense behaviour empty bucket
         DispenserBlock.registerDispenseBehavior(CeramicBucketItems.CERAMIC_BUCKET, new DefaultDispenseItemBehavior()
@@ -112,7 +110,6 @@ public class ModItems
             }
         };
         DispenserBlock.registerDispenseBehavior(CeramicBucketItems.FILLED_CERAMIC_BUCKET, idispenseitembehavior);
-        DispenserBlock.registerDispenseBehavior(CeramicBucketItems.CERAMIC_MILK_BUCKET, idispenseitembehavior);
     }
 
     private static Item registerItem(String name, Item item)
