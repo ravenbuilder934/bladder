@@ -19,8 +19,8 @@ public class ModItems
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event)
     {
-        BladderItems.EMPTY_BLADDER = registerItem("empty_bladder", new BladderItem((new Item.Properties()).maxStackSize(16).group(ItemGroup.MISC)));
-        BladderItems.FULL_BLADDER = registerItem("full_bladder", new FilledBladderItem((new Item.Properties()).maxStackSize(1).group(ItemGroup.MISC)));
+        BladderItems.EMPTY_BLADDER = registerItem("empty_bladder", new BladderItem((new Item.Properties()).stacksTo(16).tab(ItemGroup.TAB_MISC)));
+        BladderItems.FULL_BLADDER = registerItem("full_bladder", new FilledBladderItem((new Item.Properties()).stacksTo(1).tab(ItemGroup.TAB_MISC)));
     }
 
     private static Item registerItem(String name, Item item)

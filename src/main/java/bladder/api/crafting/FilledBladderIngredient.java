@@ -38,17 +38,17 @@ public class FilledBladderIngredient extends Ingredient
 
     public FilledBladderIngredient(ResourceLocation resourceLocation)
     {
-        this(FluidTags.makeWrapperTag(resourceLocation.toString()));
+        this(FluidTags.bind(resourceLocation.toString()));
     }
 
     @Override
     @Nonnull
-    public ItemStack[] getMatchingStacks()
+    public ItemStack[] getItems()
     {
         if (this.matchingStacks == null)
         {
             FilledBladderItem bucketItem = (FilledBladderItem) BladderItems.FULL_BLADDER;
-            this.matchingStacks = this.fluidTag.getAllElements().stream()
+            this.matchingStacks = this.fluidTag.getValues().stream()
                     .map(fluid -> bucketItem.getFilledInstance(fluid, null))
                     .filter(this)
                     .toArray(ItemStack[]::new);
@@ -57,7 +57,7 @@ public class FilledBladderIngredient extends Ingredient
     }
 
     @Override
-    public boolean hasNoMatchingItems()
+    public boolean isEmpty()
     {
         return false;
     }
@@ -82,7 +82,7 @@ public class FilledBladderIngredient extends Ingredient
     }
 
     @Nonnull
-    public JsonElement serialize()
+    public JsonElement toJson()
     {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("type", Serializer.NAME.toString());
@@ -109,14 +109,14 @@ public class FilledBladderIngredient extends Ingredient
         @Override
         public FilledBladderIngredient parse(@Nonnull JsonObject json)
         {
-            String tag = JSONUtils.getString(json, "tag");
-            return new FilledBladderIngredient(FluidTags.makeWrapperTag(tag));
+            String tag = JSONUtils.getAsString(json, "tag");
+            return new FilledBladderIngredient(FluidTags.bind(tag));
         }
 
         @Override
         public void write(PacketBuffer buffer, FilledBladderIngredient ingredient)
         {
-            buffer.writeString(ingredient.fluidTag.getName().toString());
+            buffer.writeUtf(ingredient.fluidTag.getName().toString());
         }
     }
 }

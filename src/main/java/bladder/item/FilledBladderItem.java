@@ -57,14 +57,14 @@ public class FilledBladderItem extends AbstractBladderItem
      * returns a list of items with the same ID, but different meta (eg: dye returns 16 items)
      */
     @Override
-    public void fillItemGroup(@Nonnull ItemGroup group, @Nonnull NonNullList<ItemStack> items)
+    public void fillItemCategory(@Nonnull ItemGroup group, @Nonnull NonNullList<ItemStack> items)
     {
-        if (this.isInGroup(group))
+        if (this.allowdedIn(group))
         {
             ArrayList<Fluid> addedFluids = new ArrayList<>();
             for (Fluid fluid : ForgeRegistries.FLUIDS)
             {
-                Item bucket = fluid.getFilledBucket();
+                Item bucket = fluid.getBucket();
                 if (bucket instanceof BucketItem)
                 {
                     Fluid bucketFluid = ((BucketItem) bucket).getFluid();
@@ -80,14 +80,14 @@ public class FilledBladderItem extends AbstractBladderItem
 
     @Override
     @Nonnull
-    public String getTranslationKey()
+    public String getDescriptionId()
     {
-        return Util.makeTranslationKey("item", BladderItems.EMPTY_BLADDER.getRegistryName());
+        return Util.makeDescriptionId("item", BladderItems.EMPTY_BLADDER.getRegistryName());
     }
 
     @Override
     @Nonnull
-    public ITextComponent getDisplayName(@Nonnull ItemStack stack)
+    public ITextComponent getName(@Nonnull ItemStack stack)
     {
         if (getFluid(stack) == Fluids.EMPTY)
         {
@@ -99,12 +99,12 @@ public class FilledBladderItem extends AbstractBladderItem
             if (getFluid(stack) == Fluids.WATER || getFluid(stack) == Fluids.LAVA)
             {
                 //vanilla fluids
-                fluidText = new TranslationTextComponent(getFluid(stack).getDefaultState().getBlockState().getBlock().getTranslationKey());
+                fluidText = new TranslationTextComponent(getFluid(stack).defaultFluidState().createLegacyBlock().getBlock().getDescriptionId());
             }
             else
             {
                 //fluids registered by mods
-                fluidText = new TranslationTextComponent(Util.makeTranslationKey("fluid", ForgeRegistries.FLUIDS.getKey(getFluid(stack))));
+                fluidText = new TranslationTextComponent(Util.makeDescriptionId("fluid", ForgeRegistries.FLUIDS.getKey(getFluid(stack))));
             }
             return new TranslationTextComponent("item.bladder.full_bladder", fluidText);
         }

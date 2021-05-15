@@ -29,7 +29,7 @@ public class BladderUtils
         {
             //all fluids have their burn time in their bucket item.
             //get the burn time via ForgeHooks.getBurnTime to let other mods change burn times of buckets of vanilla and other fluids.
-            return ForgeHooks.getBurnTime(new ItemStack(fluid.getFilledBucket()));
+            return ForgeHooks.getBurnTime(new ItemStack(fluid.getBucket()));
         }
         return -1;
     }

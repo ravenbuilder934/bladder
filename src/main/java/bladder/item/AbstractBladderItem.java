@@ -100,7 +100,7 @@ public abstract class AbstractBladderItem extends BucketItem
     {
         SoundEvent soundevent = this.getFluid(stack).getAttributes().getEmptySound();
         if (soundevent == null)
-            soundevent = this.getFluid(stack).isIn(FluidTags.LAVA) ? SoundEvents.ITEM_BUCKET_EMPTY_LAVA : SoundEvents.ITEM_BUCKET_EMPTY;
+            soundevent = this.getFluid(stack).is(FluidTags.LAVA) ? SoundEvents.BUCKET_EMPTY_LAVA : SoundEvents.BUCKET_EMPTY;
         worldIn.playSound(player, pos, soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
     }
 
@@ -110,17 +110,17 @@ public abstract class AbstractBladderItem extends BucketItem
         {
             SoundEvent soundevent = this.getFluid(stack).getAttributes().getEmptySound();
             if (soundevent == null)
-                soundevent = this.getFluid(stack).isIn(FluidTags.LAVA) ? SoundEvents.ITEM_BUCKET_FILL_LAVA : SoundEvents.ITEM_BUCKET_FILL;
+                soundevent = this.getFluid(stack).is(FluidTags.LAVA) ? SoundEvents.BUCKET_FILL_LAVA : SoundEvents.BUCKET_FILL;
             player.playSound(soundevent, 1.0F, 1.0F);
         }
     }
 
     @Override
     @Nonnull
-    public ActionResult<ItemStack> onItemRightClick(@Nonnull World worldIn, PlayerEntity playerIn, @Nonnull Hand handIn)
+    public ActionResult<ItemStack> use(@Nonnull World worldIn, PlayerEntity playerIn, @Nonnull Hand handIn)
     {
-        ItemStack itemstack = playerIn.getHeldItem(handIn);
-        RayTraceResult raytraceresult = rayTrace(worldIn, playerIn, this.getFluid(itemstack) == Fluids.EMPTY ? RayTraceContext.FluidMode.SOURCE_ONLY : RayTraceContext.FluidMode.NONE);
+        ItemStack itemstack = playerIn.getItemInHand(handIn);
+        RayTraceResult raytraceresult = getPlayerPOVHitResult(worldIn, playerIn, this.getFluid(itemstack) == Fluids.EMPTY ? RayTraceContext.FluidMode.SOURCE_ONLY : RayTraceContext.FluidMode.NONE);
         ActionResult<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onBucketUse(playerIn, worldIn, itemstack, raytraceresult);
         if (ret != null) return ret;
         if (raytraceresult.getType() == RayTraceResult.Type.MISS)
@@ -134,24 +134,24 @@ public abstract class AbstractBladderItem extends BucketItem
         else
         {
             BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult) raytraceresult;
-            BlockPos blockpos = blockraytraceresult.getPos();
-            if (worldIn.isBlockModifiable(playerIn, blockpos) && playerIn.canPlayerEdit(blockpos, blockraytraceresult.getFace(), itemstack))
+            BlockPos blockpos = blockraytraceresult.getBlockPos();
+            if (worldIn.mayInteract(playerIn, blockpos) && playerIn.mayUseItemAt(blockpos, blockraytraceresult.getDirection(), itemstack))
             {
                 if (this.getFluid(itemstack) == Fluids.EMPTY)
                 {
                     BlockState blockstate1 = worldIn.getBlockState(blockpos);
                     if (blockstate1.getBlock() instanceof IBucketPickupHandler)
                     {
-                        Fluid fluid = ((IBucketPickupHandler) blockstate1.getBlock()).pickupFluid(worldIn, blockpos, blockstate1);
+                        Fluid fluid = ((IBucketPickupHandler) blockstate1.getBlock()).takeLiquid(worldIn, blockpos, blockstate1);
                         if (fluid != Fluids.EMPTY)
                         {
-                            playerIn.addStat(Stats.ITEM_USED.get(this));
+                            playerIn.awardStat(Stats.ITEM_USED.get(this));
 
                             ItemStack itemstack1 = this.fillBucket(itemstack, playerIn, fluid);
                             this.playFillSound(playerIn, itemstack1);
-                            if (!worldIn.isRemote)
+                            if (!worldIn.isClientSide)
                             {
-                                CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayerEntity) playerIn, new ItemStack(fluid.getFilledBucket()));
+                                CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayerEntity) playerIn, new ItemStack(fluid.getBucket()));
                             }
 
                             return new ActionResult<>(ActionResultType.SUCCESS, itemstack1);
@@ -166,15 +166,15 @@ public abstract class AbstractBladderItem extends BucketItem
                 {
                     Fluid fluid = this.getFluid(itemstack);
                     CauldronBlock cauldron = (CauldronBlock) blockstate.getBlock();
-                    int level = blockstate.get(CauldronBlock.LEVEL);
-                    if (fluid.isIn(FluidTags.WATER))
+                    int level = blockstate.getValue(CauldronBlock.LEVEL);
+                    if (fluid.is(FluidTags.WATER))
                     {
                         if (level < 3)
                         {
-                            ItemStack emptyStack = this.emptyBucket(itemstack, playerIn);
-                            if (!worldIn.isRemote)
+                            ItemStack emptyStack = this.getEmptySuccessItem(itemstack, playerIn);
+                            if (!worldIn.isClientSide)
                             {
-                                playerIn.addStat(Stats.FILL_CAULDRON);
+                                playerIn.awardStat(Stats.FILL_CAULDRON);
                                 cauldron.setWaterLevel(worldIn, blockpos, blockstate, 3);
                             }
                             this.playEmptySound(playerIn, worldIn, blockpos, itemstack);
@@ -187,9 +187,9 @@ public abstract class AbstractBladderItem extends BucketItem
                         if (level == 3)
                         {
                             itemstack = this.fillBucket(itemstack, playerIn, Fluids.WATER);
-                            if (!worldIn.isRemote)
+                            if (!worldIn.isClientSide)
                             {
-                                playerIn.addStat(Stats.USE_CAULDRON);
+                                playerIn.awardStat(Stats.USE_CAULDRON);
                                 cauldron.setWaterLevel(worldIn, blockpos, blockstate, 0);
                             }
                             this.playFillSound(playerIn, itemstack);
@@ -198,17 +198,17 @@ public abstract class AbstractBladderItem extends BucketItem
                     }
                 }
 
-                BlockPos blockpos1 = canBlockContainFluid(worldIn, blockpos, blockstate, itemstack) ? blockpos : blockraytraceresult.getPos().offset(blockraytraceresult.getFace());
+                BlockPos blockpos1 = canBlockContainFluid(worldIn, blockpos, blockstate, itemstack) ? blockpos : blockraytraceresult.getBlockPos().relative(blockraytraceresult.getDirection());
                 if (this.tryPlaceContainedLiquid(playerIn, worldIn, blockpos1, blockraytraceresult, itemstack))
                 {
-                    this.onLiquidPlaced(worldIn, itemstack, blockpos1);
+                    this.checkExtraContent(worldIn, itemstack, blockpos1);
                     if (playerIn instanceof ServerPlayerEntity)
                     {
                         CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayerEntity) playerIn, blockpos1, itemstack);
                     }
 
-                    playerIn.addStat(Stats.ITEM_USED.get(this));
-                    return new ActionResult<>(ActionResultType.SUCCESS, this.emptyBucket(itemstack, playerIn));
+                    playerIn.awardStat(Stats.ITEM_USED.get(this));
+                    return new ActionResult<>(ActionResultType.SUCCESS, this.getEmptySuccessItem(itemstack, playerIn));
                 }
                 else
                 {
@@ -224,15 +224,15 @@ public abstract class AbstractBladderItem extends BucketItem
 
     private ItemStack fillBucket(ItemStack stack, PlayerEntity player, Fluid fluid)
     {
-        if (player == null || !player.abilities.isCreativeMode)
+        if (player == null || !player.abilities.instabuild)
         {
             if (stack.getCount() > 1)
             {
                 ItemStack newStack = BladderUtils.getFilledBladder(fluid, stack);
                 stack.shrink(1);
-                if (player != null && !player.inventory.addItemStackToInventory(newStack))
+                if (player != null && !player.inventory.add(newStack))
                 {
-                    player.dropItem(newStack, false);
+                    player.drop(newStack, false);
                 }
                 //old stack must be returned
             }
@@ -246,9 +246,9 @@ public abstract class AbstractBladderItem extends BucketItem
 
     @Override
     @Nonnull
-    public ItemStack emptyBucket(@Nonnull ItemStack stack, @Nullable PlayerEntity player)
+    public ItemStack getEmptySuccessItem(@Nonnull ItemStack stack, @Nullable PlayerEntity player)
     {
-        if (player != null && player.abilities.isCreativeMode)
+        if (player != null && player.abilities.instabuild)
         {
             return stack;
         }
@@ -257,7 +257,7 @@ public abstract class AbstractBladderItem extends BucketItem
 
     @Deprecated
     @Override
-    public boolean tryPlaceContainedLiquid(@Nullable PlayerEntity player, @Nonnull World worldIn, @Nonnull BlockPos posIn, @Nullable BlockRayTraceResult raytrace)
+    public boolean emptyBucket(@Nullable PlayerEntity player, @Nonnull World worldIn, @Nonnull BlockPos posIn, @Nullable BlockRayTraceResult raytrace)
     {
         return false;
     }
@@ -270,7 +270,7 @@ public abstract class AbstractBladderItem extends BucketItem
         {
             return false;
         }
-        else if (!fluidAttributes.canBePlacedInWorld(worldIn, posIn, fluid.getDefaultState()))
+        else if (!fluidAttributes.canBePlacedInWorld(worldIn, posIn, fluid.defaultFluidState()))
         {
             return false;
         }
@@ -281,37 +281,37 @@ public abstract class AbstractBladderItem extends BucketItem
             boolean flag = !material.isSolid();
             boolean flag1 = material.isReplaceable();
             boolean canContainFluid = canBlockContainFluid(worldIn, posIn, blockstate, stack);
-            if (worldIn.isAirBlock(posIn) || flag || flag1 || canContainFluid)
+            if (worldIn.isEmptyBlock(posIn) || flag || flag1 || canContainFluid)
             {
                 IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(stack).orElse(null);
                 FluidStack fluidStack = fluidHandler != null ? fluidHandler.drain(FluidAttributes.BUCKET_VOLUME, IFluidHandler.FluidAction.SIMULATE) : null;
-                if (fluidStack != null && worldIn.getDimensionType().isUltrawarm() && this.getFluid(stack).isIn(FluidTags.WATER))
+                if (fluidStack != null && worldIn.dimensionType().ultraWarm() && this.getFluid(stack).is(FluidTags.WATER))
                 {
                     fluidAttributes.vaporize(player, worldIn, posIn, fluidStack);
                 }
                 else if (canContainFluid)
                 {
-                    if (((ILiquidContainer) blockstate.getBlock()).receiveFluid(worldIn, posIn, blockstate, ((FlowingFluid) fluid).getStillFluidState(false)))
+                    if (((ILiquidContainer) blockstate.getBlock()).placeLiquid(worldIn, posIn, blockstate, ((FlowingFluid) fluid).getSource(false)))
                     {
                         this.playEmptySound(player, worldIn, posIn, stack);
                     }
                 }
                 else
                 {
-                    if (!worldIn.isRemote && (flag || flag1) && !material.isLiquid())
+                    if (!worldIn.isClientSide && (flag || flag1) && !material.isLiquid())
                     {
                         worldIn.destroyBlock(posIn, true);
                     }
 
                     this.playEmptySound(player, worldIn, posIn, stack);
-                    worldIn.setBlockState(posIn, fluid.getDefaultState().getBlockState(), 11);
+                    worldIn.setBlock(posIn, fluid.defaultFluidState().createLegacyBlock(), 11);
                 }
 
                 return true;
             }
             else
             {
-                return raytrace != null && this.tryPlaceContainedLiquid(player, worldIn, raytrace.getPos().offset(raytrace.getFace()), null, stack);
+                return raytrace != null && this.tryPlaceContainedLiquid(player, worldIn, raytrace.getBlockPos().relative(raytrace.getDirection()), null, stack);
             }
         }
     }
@@ -361,7 +361,7 @@ public abstract class AbstractBladderItem extends BucketItem
 
     private boolean canBlockContainFluid(World worldIn, BlockPos posIn, BlockState blockstate, ItemStack itemStack)
     {
-        return blockstate.getBlock() instanceof ILiquidContainer && ((ILiquidContainer) blockstate.getBlock()).canContainFluid(worldIn, posIn, blockstate, this.getFluid(itemStack));
+        return blockstate.getBlock() instanceof ILiquidContainer && ((ILiquidContainer) blockstate.getBlock()).canPlaceLiquid(worldIn, posIn, blockstate, this.getFluid(itemStack));
     }
 
 }
